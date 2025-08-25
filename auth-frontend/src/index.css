@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+@theme {
+  /* Your modern dark theme colors */
+  --color-dark-bg: #0a0a0a;
+  --color-dark-surface: #1a1a1a;
+  --color-dark-card: #2d2d2d;
+  --color-dark-border: #404040;
+  --color-dark-text: #e5e5e5;
+  --color-dark-muted: #9ca3af;
+
+  /* Techy accent colors */
+  --color-accent-blue: #3b82f6;
+  --color-accent-purple: #8b5cf6;
+  --color-accent-green: #10b981;
+  --color-accent-cyan: #06b6d4;
+  --color-accent-pink: #ec4899;
+
+  /* Custom font */
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background:
+      radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(59, 130, 246, 0.15),
+        transparent 40%),
+      radial-gradient(800px circle at calc(var(--mouse-x, 50%) + 200px) calc(var(--mouse-y, 50%) + 200px),
+        rgba(139, 92, 246, 0.1),
+        transparent 40%),
+      radial-gradient(1000px circle at calc(var(--mouse-x, 50%) - 100px) calc(var(--mouse-y, 50%) + 100px),
+        rgba(16, 185, 129, 0.08),
+        transparent 50%),
+      linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+
+    color: var(--color-dark-text);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.3s ease;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    background-color: var(--color-accent-blue);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary:hover {
+    background-color: #2563eb;
+    transform: translateY(-1px);
+  }
+
+  /* Dynamic input field with CSS variables for theme colors */
+  .input-field {
+    background-color: var(--color-dark-surface);
+    border: 1px solid var(--color-dark-border);
+    color: var(--color-dark-text);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    width: 100%;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .input-field:focus {
+    outline: none;
+    border-color: var(--form-accent-color);
+    box-shadow: 0 0 0 3px var(--form-accent-shadow);
+  }
+
+  /* Enhanced card with backdrop blur */
+  .glass-card {
+    background: rgba(26, 26, 26, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(64, 64, 64, 0.3);
+    border-radius: 12px;
+  }
+
+  /* Theme-specific form containers */
+  .login-form {
+    --form-accent-color: var(--color-accent-blue);
+    --form-accent-shadow: rgba(59, 130, 246, 0.2);
+  }
+
+  .register-form {
+    --form-accent-color: var(--color-accent-purple);
+    --form-accent-shadow: rgba(139, 92, 246, 0.2);
+  }
+}
