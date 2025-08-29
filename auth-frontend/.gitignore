@@ -19,10 +19,10 @@ dist-ssr
 .env.test.local
 .env.production.local
 
-# Testing coverage (if you add tests later)
+# Testing coverage 
 coverage/
 
-# Firebase (I see you have .firebase folder)
+# Firebase
 .firebase/
 
 # Editor directories and files
@@ -36,5 +36,5 @@ coverage/
 *.sln
 *.sw?
 
-# Optional: Additional build/cache files
+
 .turbo/

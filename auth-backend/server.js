@@ -43,16 +43,25 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 
+// Root route for testing
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Auth Backend API is running!',
+    endpoints: ['/api/health', '/api/auth/register', '/api/auth/login']
+  });
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
-    message: 'Server is running!',
+    message: 'Server is running on Vercel!',
     timestamp: new Date().toISOString()
   });
 });
 
-// 404 handler - NO WILDCARDS
+// 404 handler
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -70,8 +79,13 @@ app.use((error, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
+// EXPORT for Vercel (CRITICAL FIX)
+module.exports = app;
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
-});
+// Listen only on local development - NOT on production/Vercel
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+  });
+}
