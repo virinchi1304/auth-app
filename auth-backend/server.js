@@ -16,9 +16,18 @@ const app = express();
 // Security middleware
 app.use(helmet());
 
-// CORS configuration
+// CORS configuration (supports multiple origins: local + Firebase)
+const allowedOrigins = (process.env.CLIENT_URL || '').split(',');
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, Postman)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
@@ -53,7 +62,7 @@ app.use((req, res) => {
 
 // Global error handler
 app.use((error, req, res, next) => {
-  console.error('Error:', error);
+  console.error('Error:', error.message);
   res.status(500).json({
     success: false,
     message: 'Internal server error',

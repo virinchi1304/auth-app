@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { Eye, EyeOff } from 'lucide-react' // 👈 icons for toggling visibility
 import { register } from '../services/authService'
 
 function Register() {
@@ -12,6 +13,8 @@ function Register() {
   })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showPassword, setShowPassword] = useState(false) // 👈 toggle for password
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false) // 👈 toggle for confirm
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
@@ -19,14 +22,12 @@ function Register() {
     setIsLoading(true)
     setError('')
 
-    // Client-side password validation
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match!')
       setIsLoading(false)
       return
     }
 
-    // Password strength validation
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters long')
       setIsLoading(false)
@@ -34,7 +35,6 @@ function Register() {
     }
 
     try {
-      // Call backend API
       const userData = {
         username: formData.username,
         email: formData.email,
@@ -42,10 +42,8 @@ function Register() {
       }
       
       await register(userData)
-      // Redirect to dashboard on success
       navigate('/dashboard')
     } catch (error) {
-      // Handle different types of errors
       if (error.errors && error.errors.length > 0) {
         setError(error.errors[0].msg || 'Registration failed')
       } else {
@@ -72,7 +70,6 @@ function Register() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        {/* Add register-form class to container for purple theme */}
         <div className="glass-card register-form p-8 shadow-2xl">
           <div className="text-center mb-8">
             <motion.h1 
@@ -89,7 +86,6 @@ function Register() {
             </p>
           </div>
 
-          {/* Error message display */}
           {error && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
@@ -148,6 +144,7 @@ function Register() {
               />
             </motion.div>
 
+            {/* Password Field with Show/Hide */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -156,22 +153,33 @@ function Register() {
               <label className="block text-sm font-medium mb-2">
                 Password
               </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="input-field"
-                placeholder="Create a password"
-                required
-                disabled={isLoading}
-                minLength={6}
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="input-field pr-10"
+                  placeholder="Create a password"
+                  required
+                  disabled={isLoading}
+                  minLength={6}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-3 flex items-center text-gray-500"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
               <p className="text-xs mt-1" style={{ color: 'var(--color-dark-muted)' }}>
                 Minimum 6 characters
               </p>
             </motion.div>
 
+            {/* Confirm Password Field with Show/Hide */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -180,16 +188,26 @@ function Register() {
               <label className="block text-sm font-medium mb-2">
                 Confirm Password
               </label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className="input-field"
-                placeholder="Confirm your password"
-                required
-                disabled={isLoading}
-              />
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="input-field pr-10"
+                  placeholder="Confirm your password"
+                  required
+                  disabled={isLoading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute inset-y-0 right-3 flex items-center text-gray-500"
+                  tabIndex={-1}
+                >
+                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </motion.div>
 
             <motion.button

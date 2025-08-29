@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { Eye, EyeOff } from 'lucide-react'
 import { login } from '../services/authService'
 
 function Login() {
@@ -10,6 +11,7 @@ function Login() {
   })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showPassword, setShowPassword] = useState(false) 
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
@@ -44,7 +46,6 @@ function Login() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        {/* Add login-form class to container for blue theme */}
         <div className="glass-card login-form p-8 shadow-2xl">
           <div className="text-center mb-8">
             <motion.h1 
@@ -106,16 +107,26 @@ function Login() {
               <label className="block text-sm font-medium mb-2">
                 Password
               </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="input-field"
-                placeholder="Enter your password"
-                required
-                disabled={isLoading}
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="input-field pr-10" 
+                  placeholder="Enter your password"
+                  required
+                  disabled={isLoading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-3 flex items-center text-gray-500"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </motion.div>
 
             <motion.button
