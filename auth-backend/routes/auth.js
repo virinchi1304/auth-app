@@ -6,6 +6,20 @@ const { protect } = require('../middleware/auth');
 
 const router = express.Router();
 
+router.get('/debug', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Auth routes are working!',
+    env: {
+      hasJwtSecret: !!process.env.JWT_SECRET,
+      hasMongoUri: !!process.env.MONGODB_URI,
+      hasJwtExpire: !!process.env.JWT_EXPIRE,
+      nodeEnv: process.env.NODE_ENV
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Generate JWT Token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {

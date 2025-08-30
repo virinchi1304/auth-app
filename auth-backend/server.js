@@ -13,51 +13,67 @@ connectDB();
 
 const app = express();
 
-// Security middleware
-app.use(helmet());
+// CORS configuration using CLIENT_URL environment variable
+const allowedOrigins = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(',').map(origin => origin.trim())
+  : [
+      'http://localhost:3000',
+      'https://auth-app-de665.web.app',
+      'https://auth-app-de665.firebaseapp.com'
+    ];
 
-// CORS configuration (supports multiple origins: local + Firebase)
-const allowedOrigins = (process.env.CLIENT_URL || '').split(',');
+console.log('🔧 Allowed origins:', allowedOrigins);
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, Postman)
+    console.log('🛰 Incoming request from:', origin);
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.log('❌ CORS blocked:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
 
-// Logging middleware
+app.options('*', cors());
+app.use(helmet());
+
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Body parser middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 
-// Root route for testing
+// Root route
 app.get('/', (req, res) => {
   res.json({
     success: true,
     message: 'Auth Backend API is running!',
-    endpoints: ['/api/health', '/api/auth/register', '/api/auth/login']
+    endpoints: ['/api/health', '/api/auth/register', '/api/auth/login'],
+    allowedOrigins: allowedOrigins.length
   });
 });
 
-// Health check endpoint
+// Health check
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
     message: 'Server is running on Vercel!',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    env: {
+      nodeEnv: process.env.NODE_ENV,
+      hasClientUrl: !!process.env.CLIENT_URL,
+      hasJwtSecret: !!process.env.JWT_SECRET,
+      hasMongoUri: !!process.env.MONGODB_URI
+    }
   });
 });
 
@@ -79,10 +95,9 @@ app.use((error, req, res, next) => {
   });
 });
 
-// EXPORT for Vercel (CRITICAL FIX)
 module.exports = app;
 
-// Listen only on local development - NOT on production/Vercel
+// For local development
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
