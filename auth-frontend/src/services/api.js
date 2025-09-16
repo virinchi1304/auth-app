@@ -1,8 +1,10 @@
 import axios from 'axios';
 
-// Create axios instance with base configuration
+// Use a unique variable name to avoid conflicts
+const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
 const api = axios.create({
-  baseURL: 'https://auth-backend-cq3hwuavy-virinchi-a-s-a-vs-projects.vercel.app/api',
+  baseURL: apiBaseUrl, // No /api suffix needed
   headers: {
     'Content-Type': 'application/json',
   },

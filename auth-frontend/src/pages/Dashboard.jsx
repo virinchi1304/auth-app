@@ -92,7 +92,7 @@ function Dashboard() {
                   className="mb-4"
                 >
                   <p className="text-xl mb-2" style={{ color: 'var(--color-dark-text)' }}>
-                    Hello, <span style={{ color: 'var(--color-accent-blue)' }}>{user.username}</span>! 
+                    Hello, <span style={{ color: 'var(--color-accent-blue)' }}>{user.name || user.username}</span>! 
                   </p>
                   <p style={{ color: 'var(--color-dark-muted)' }}>
                     Email: {user.email}
@@ -160,7 +160,7 @@ function Dashboard() {
                 Account Status
               </h3>
               <p style={{ color: 'var(--color-dark-text)' }}>
-                 Account verified and active
+                ✅ Account verified and active
               </p>
               <p style={{ color: 'var(--color-dark-muted)' }}>
                 Your authentication is working perfectly!
@@ -178,7 +178,7 @@ function Dashboard() {
                 Security
               </h3>
               <p style={{ color: 'var(--color-dark-text)' }}>
-                 JWT Authentication Active
+                🔒 JWT Authentication Active
               </p>
               <p style={{ color: 'var(--color-dark-muted)' }}>
                 Your session is secure and protected
